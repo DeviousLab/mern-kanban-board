@@ -7,16 +7,69 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import assets from '../assets/index'
+import boardApi from '../api/boardApi'
+import { setBoards } from '../redux/features/boardSlice'
 
 const Sidebar = () => {
+  const [activeIndex, setActiveIndex] = useState(false);
   const user = useSelector(state => state.user.value);
+  const boards = useSelector(state => state.board.value);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { boardId } = useParams();
+
+  useEffect(() => {
+    const getBoards = async () => {
+      try {
+        const response = await boardApi.getAll()
+        dispatch(setBoards(response))
+      } catch (err) {
+        alert(err)
+      }
+    }
+    getBoards()
+  }, [dispatch])
+
+  useEffect(() => {
+    const activeItem = boards.findIndex(board => board.id === boardId)
+    if (boards.length > 0 && boardId === undefined) {
+      navigate(`/board/${boards[0].id}`)
+    }
+    setActiveIndex(activeItem)
+  }, [boards, boardId, navigate])
 
   const logout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   }
+
+  const onDragEnd = async ({ source, destination}) => {
+    const newList = [...boards];
+    const [removed] = newList.splice(source.index, 1);
+    newList.splice(destination.index, 0, removed);
+
+    const activeItem = newList.findIndex(board => board.id === boardId);
+    setActiveIndex(activeItem)
+    dispatch(setBoards(newList))
+
+    try {
+      await boardApi.updatePosition({ boards: newList });
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  const addBoard = async () => {
+    try {
+      const response = await boardApi.create();
+      const newList = [response, ...boards];
+      dispatch(setBoards(newList))
+      navigate(`/board/${response.id}`);
+    } catch (error) {
+      alert(error)
+    }
+  }
+
   return (
     <Drawer
       container={window.document.body}
@@ -64,12 +117,12 @@ const Sidebar = () => {
             <Typography variant='body2' fontWeight='700'>
               Private
             </Typography>
-            <IconButton>
+            <IconButton onClick={addBoard}>
               <AddBoxOutlinedIcon fontSize='small' />
             </IconButton>
           </Box>
         </ListItem>
-        {/* <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd}>
           <Droppable key={'list-board-droppable-key'} droppableId={'list-board-droppable'}>
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -83,7 +136,7 @@ const Sidebar = () => {
                           {...provided.draggableProps}
                           selected={index === activeIndex}
                           component={Link}
-                          to={`/boards/${item.id}`}
+                          to={`/board/${item.id}`}
                           sx={{
                             pl: '20px',
                             cursor: snapshot.isDragging ? 'grab' : 'pointer!important'
@@ -105,7 +158,7 @@ const Sidebar = () => {
               </div>
             )}
           </Droppable>
-        </DragDropContext> */}
+        </DragDropContext>
       </List>
     </Drawer>
   )
