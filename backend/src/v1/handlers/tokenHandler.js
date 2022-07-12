@@ -21,25 +21,11 @@ exports.verifyToken = async (req, res, next) => {
   if (decoded) {
     const user = await User.findById(decoded.id);
     if (!user) {
-      res.status(401).json({
-        errors: [
-          {
-            param: 'token',
-            msg: 'Unauthorised',
-          }
-        ]
-      });
+      res.status(401).json('Unauthorized');
     }
     req.user = user;
     next();
   } else {
-    res.status(401).json({
-      errors: [
-        {
-          param: 'token',
-          msg: 'Unauthorised',
-        }
-      ]
-    });
+    res.status(401).json('Unauthorized');
   }
 }
