@@ -33,7 +33,7 @@ const SignIn = () => {
     setLoading(true);
     
     try {
-      const res = await authApi.register({
+      const res = await authApi.login({
         username,
         password,
       })
