@@ -12,7 +12,6 @@ const Home = () => {
     }}>
       <LoadingButton
         variant='contained'
-        onAbort={createBoard}
       >
         Create your first board
       </LoadingButton>
