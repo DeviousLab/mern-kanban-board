@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, CircularProgress } from '@mui/material';
 
-const Loading = (props) => {
+const Spinner = (props) => {
   return (
     <Box sx={{
       display: 'flex',
@@ -15,4 +15,4 @@ const Loading = (props) => {
   )
 }
 
-export default Loading
+export default Spinner
