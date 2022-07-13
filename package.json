@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "concurrently": "^7.2.2",
+    "dotenv": "^16.0.1"
+  },
+  "name": "mern-kanban-board",
+  "description": "Kanban board built with MERN stack",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node backend/bin/www",
+    "server": "nodemon backend/bin/www",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm start --prefix client && npm run build --prefix client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeviousLab/mern-kanban-board.git"
+  },
+  "author": "DeviousLab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DeviousLab/mern-kanban-board/issues"
+  },
+  "homepage": "https://github.com/DeviousLab/mern-kanban-board#readme"
+}

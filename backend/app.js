@@ -11,7 +11,17 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Welcome to MERN Kanban Board' })
+  });
+}
 
 app.use('/api/v1', require('./src/v1/routes'));
 
