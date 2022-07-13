@@ -55,3 +55,33 @@ exports.getOne = async (req, res) => {
     res.status(500).json(error);
   }
 }
+
+exports.update = async (req, res) => {
+  const { boardId } = req.params;
+  const { title, description, favourite } = req.body;
+  try {
+    if(title === '') req.body.title = 'Untitled';
+    if(description === '') req.body.description = 'Add a description';
+    const currentBoard = await Board.findById(boardId);
+    if(!currentBoard) return res.status(404).json('Board not found');
+    if(favourite !== undefined && currentBoard.favourite !== favourite) {
+      const favourites = await Board.find({
+        user: currentBoard.user,
+        favourite: true,
+        _id: { $ne: boardId }
+      });
+      if(favourite) {
+        req.body.favouritePosition = favourites.length > 0 ? favourites.length : 0;
+      } else {
+        for (const key of favourites) {
+          const element = favourites[key];
+          await Board.findByIdAndUpdate(element.id, { $set: { favouritePosition: key }});
+        }
+      }
+    }
+    const board = await Board.findByIdAndUpdate(boardId, { $set: req.body });
+    res.status(200).json(board);
+  } catch (error) {
+    console.log(error);
+  }
+}
