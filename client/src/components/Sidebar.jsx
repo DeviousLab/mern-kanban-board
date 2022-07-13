@@ -10,9 +10,11 @@ import assets from '../assets/index'
 import boardApi from '../api/boardApi'
 import { setBoards } from '../redux/features/boardSlice'
 import FavouriteList from './FavouriteList'
+import Spinner from './Spinner'
 
 const Sidebar = () => {
   const [activeIndex, setActiveIndex] = useState(false);
+  const [loading, setLoading] = useState(true);
   const user = useSelector(state => state.user.value);
   const boards = useSelector(state => state.board.value);
   const dispatch = useDispatch();
@@ -32,11 +34,15 @@ const Sidebar = () => {
   }, [dispatch])
 
   useEffect(() => {
-    const activeItem = boards.findIndex(board => board.id === boardId)
-    if (boards.length > 0 && boardId === undefined) {
-      navigate(`/board/${boards[0].id}`)
-    }
-    setActiveIndex(activeItem)
+    const timer = setTimeout(() => {
+      const activeItem = boards.findIndex(board => board.id === boardId)
+      if (boards.length > 0 && boardId === undefined) {
+        navigate(`/board/${boards[0].id}`)
+      };
+      setActiveIndex(activeItem);
+      setLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer)
   }, [boards, boardId, navigate])
 
   const logout = () => {
@@ -69,6 +75,10 @@ const Sidebar = () => {
     } catch (error) {
       alert(error)
     }
+  }
+
+  if (loading) {
+    return <Spinner />
   }
 
   return (
