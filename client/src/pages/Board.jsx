@@ -10,11 +10,12 @@ import boardApi from '../api/boardApi'
 import { setBoards } from '../redux/features/boardSlice'
 import { setFavouriteList } from '../redux/features/favouriteSlice'
 import EmojiPicker from '../components/EmojiPicker'
+import Kanban from '../components/Kanban'
 
 const Board = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [section, setSection] = useState('');
+  const [section, setSection] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
   const [icon, setIcon] = useState('');
   const { boardId } = useParams();
@@ -30,7 +31,7 @@ const Board = () => {
         const response = await boardApi.getOne(boardId);
         setTitle(response.title);
         setDescription(response.description);
-        setSection(response.section);
+        setSection(response.sections);
         setIsFavourite(response.favourite);
         setIcon(response.icon);
       } catch (error) {
@@ -179,6 +180,7 @@ const Board = () => {
           />
         </Box>
         <Box>
+          <Kanban data={section} boardId={boardId} />
         </Box>
       </Box>
     </>

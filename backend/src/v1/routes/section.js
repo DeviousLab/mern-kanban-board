@@ -15,7 +15,7 @@ router.post('/',
   sectionController.create
 );
 
-router.put('/sectionId',
+router.put('/:sectionId',
   param('boardId').custom(value => {
     if (!validation.isObjectId(value)) {
       return Promise.reject('Invalid boardId');
@@ -31,7 +31,7 @@ router.put('/sectionId',
   sectionController.update
 );
 
-router.delete('/sectionId',
+router.delete('/:sectionId',
   param('boardId').custom(value => {
     if (!validation.isObjectId(value)) {
       return Promise.reject('Invalid boardId');

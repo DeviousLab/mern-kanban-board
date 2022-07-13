@@ -15,7 +15,6 @@ const FavouriteList = () => {
   const { boardId } = useParams();
 
   const list = useSelector(state => state.favourites.value);
-  console.log(list)
 
   useEffect(() => {
     const getBoards = async () => {
@@ -30,12 +29,12 @@ const FavouriteList = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const getIndex = async () => {
-      const index = await list.findIndex(e => e.id === boardId);
+    const timer = setTimeout(() => {
+      const index = list.findIndex(e => e.id === boardId);
       setActiveIndex(index);
       setLoading(false);
-    }
-    getIndex();
+    }, 1000);
+    return () => clearTimeout(timer)
   }, [boardId, list])
 
   const onDragEnd = async ({ source, destination }) => {
