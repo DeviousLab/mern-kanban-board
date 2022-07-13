@@ -6,10 +6,11 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 
 import sectionApi from '../api/sectionApi'
 import Spinner from '../components/Spinner'
+import taskApi from '../api/taskApi'
+import TaskModal from './TaskModal'
 
 const Kanban = (props) => {
   const boardId = props.boardId;
-  console.log(props);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(undefined);
@@ -20,10 +21,42 @@ const Kanban = (props) => {
       setLoading(false)
     }, 1000);
     return () => clearTimeout(timer)
-  }, [props.data])
+  }, [props.data]);
 
   const onDragEnd = async ({ source, destination }) => {
+    if (!destination) return;
+    const sourceColIndex = data.findIndex(el => el.id === source.droppableId);
+    const destinationColIndex = data.findIndex(el => el.id === destination.droppableId);
+    const sourceCol = data[sourceColIndex];
+    const destinationCol = data[destinationColIndex];
 
+    const sourceSectionId = sourceCol.id;
+    const destinationSectionId = destinationCol.id;
+
+    const sourceTasks = [...sourceCol.tasks];
+    const destinationTasks = [...destinationCol.tasks];
+
+    if(source.droppableId !== destination.droppableId) {
+      const [removed] = sourceTasks.splice(source.index, 1);
+      destinationTasks.splice(destination.index, 0, removed);
+      data[sourceColIndex].tasks = sourceTasks;
+      data[destinationColIndex].tasks = destinationTasks;
+    } else {
+      const [removed] = destinationTasks.splice(source.index, 1)
+      destinationTasks.splice(destination.index, 0, removed)
+      data[destinationColIndex].tasks = destinationTasks
+    }
+    try {
+      await taskApi.updatePosition(boardId, {
+        resourceList: sourceTasks,
+        destinationList: destinationTasks,
+        resourceSectionId: sourceSectionId,
+        destinationSectionId: destinationSectionId,
+      })
+      setData(data)
+    } catch (error) {
+      alert(error)
+    }
   }
 
   const createSection = async () => {
@@ -59,7 +92,31 @@ const Kanban = (props) => {
   }
 
   const createTask = async (sectionId) => {
-    
+    try {
+      const task = await taskApi.create(boardId, { sectionId });
+      const newData = [...data];
+      const index = newData.findIndex(el => el.id === sectionId);
+      newData[index].tasks.unshift(task);
+      setData(newData);
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  const onUpdateTask = async (task) => {
+    const newData = [...data];
+    const sectionIndex = newData.findIndex(el => el.id === task.section.id);
+    const taskIndex = newData[sectionIndex].tasks.findIndex(el => el.id === task.id);
+    newData[sectionIndex].tasks[taskIndex] = task;
+    setData(newData);
+  }
+
+  const onDeleteTask = async (task) => {
+    const newData = [...data];
+    const sectionIndex = newData.findIndex(el => el.id === task.section.id);
+    const taskIndex = newData[sectionIndex].tasks.findIndex(el => el.id === task.id);
+    newData[sectionIndex].tasks.splice(taskIndex, 1);
+    setData(newData);
   }
 
   if (loading) {
@@ -81,7 +138,7 @@ const Kanban = (props) => {
         </Typography>
       </Box>
       <Divider sx={{ margin: '10px 0' }} />
-      <DragDropContext >
+      <DragDropContext onDragEnd={onDragEnd}>
         <Box sx={{
           display: 'flex',
           alignItems: 'flex-start',
@@ -139,7 +196,6 @@ const Kanban = (props) => {
                           <DeleteOutlinedIcon />
                         </IconButton>
                       </Box>
-                      {/* tasks */}
                       {
                         section.tasks.map((task, index) => (
                           <Draggable key={task.id} draggableId={task.id} index={index}>
@@ -153,6 +209,7 @@ const Kanban = (props) => {
                                   marginBottom: '10px',
                                   cursor: snapshot.isDragging ? 'grab' : 'pointer!important'
                                 }}
+                                onClick={() => setSelectedTask(task)}
                               >
                                 <Typography>
                                   {task.title === '' ? 'Untitled' : task.title}
@@ -171,6 +228,13 @@ const Kanban = (props) => {
           }
         </Box>
       </DragDropContext>
+      <TaskModal
+        task={selectedTask}
+        boardId={boardId}
+        onClose={() => setSelectedTask(undefined)}
+        onUpdate={onUpdateTask}
+        onDelete={onDeleteTask}
+      />
     </>
   )
 }
