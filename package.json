@@ -1,7 +1,16 @@
 {
   "dependencies": {
     "concurrently": "^7.2.2",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-validator": "^6.14.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.4.4",
+    "morgan": "~1.9.1"
   },
   "name": "mern-kanban-board",
   "description": "Kanban board built with MERN stack",
@@ -12,7 +21,7 @@
     "server": "nodemon backend/bin/www",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm start --prefix client && npm run build --prefix client"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "repository": {
     "type": "git",
