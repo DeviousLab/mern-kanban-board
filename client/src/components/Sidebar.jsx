@@ -9,6 +9,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import assets from '../assets/index'
 import boardApi from '../api/boardApi'
 import { setBoards } from '../redux/features/boardSlice'
+import FavouriteList from './FavouriteList'
 
 const Sidebar = () => {
   const [activeIndex, setActiveIndex] = useState(false);
@@ -105,7 +106,7 @@ const Sidebar = () => {
           </Box>
         </ListItem>
         <Box sx={{ paddingTop: '10px' }} />
-        {/* <FavouriteList /> */}
+        <FavouriteList />
         <Box sx={{ paddingTop: '10px' }} />
         <ListItem>
           <Box sx={{
