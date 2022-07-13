@@ -33,7 +33,7 @@ const FavouriteList = () => {
       const index = list.findIndex(e => e.id === boardId);
       setActiveIndex(index);
       setLoading(false);
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer)
   }, [boardId, list])
 

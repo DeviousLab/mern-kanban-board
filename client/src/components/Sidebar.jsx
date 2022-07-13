@@ -41,7 +41,7 @@ const Sidebar = () => {
       };
       setActiveIndex(activeItem);
       setLoading(false);
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer)
   }, [boards, boardId, navigate])
 

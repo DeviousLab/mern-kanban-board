@@ -27,7 +27,7 @@ const TaskModal = (props) => {
         isModalClosed = false;
         updateEditorHeight();
       }
-    }, 1000);
+    }, 5000);
     setTitle(props.task !== undefined ? props.task.title : '');
     setContent(props.task !== undefined ? props.task.content : '');
     return () => clearTimeout(timer)

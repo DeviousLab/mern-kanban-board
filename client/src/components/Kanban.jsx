@@ -19,7 +19,7 @@ const Kanban = (props) => {
     const timer = setTimeout(() => {
       setData(props.data)
       setLoading(false)
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer)
   }, [props.data]);
 
