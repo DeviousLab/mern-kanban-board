@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, TextField } from '@mui/material'
+import { Box, Button, TextField, Alert, AlertTitle } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import LoadingButton from '@mui/lab/LoadingButton'
 
@@ -31,7 +31,7 @@ const SignIn = () => {
     }
     if (error) return;
     setLoading(true);
-    
+
     try {
       const res = await authApi.login({
         username,
@@ -103,6 +103,12 @@ const SignIn = () => {
       >
         Don't have an account? Register Now!
       </Button>
+      <Alert severity="info">
+        <AlertTitle>Demo Account</AlertTitle>
+        <strong>Username</strong>: demoaccount
+        <br />
+        <strong>Password</strong>: 12345678
+      </Alert>
     </>
   )
 }

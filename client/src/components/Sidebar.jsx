@@ -36,6 +36,7 @@ const Sidebar = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       const activeItem = boards.findIndex(board => board.id === boardId)
+      console.log(boards)
       if (boards.length > 0 && boardId === undefined) {
         navigate(`/board/${boards[0].id}`)
       };
